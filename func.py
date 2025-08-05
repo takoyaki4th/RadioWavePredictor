@@ -1,5 +1,7 @@
 import numpy as np
 import pandas as pd
+import os
+path = os.path.dirname(__file__)
 from constant import INPUT_LEN
 
 def make_data_set(changed_data,input_len):
@@ -21,10 +23,20 @@ def read_csv_and_convert_dataset(csv_path):
     data_numpy_normalized = (data_numpy - data_numpy.mean()) / data_numpy.std()
     x,y=make_data_set(data_numpy_normalized,INPUT_LEN)
     return x,y
-'''
-def output_txt(arr,path):
-    # テキストファイルに書き込み
-    with open(path, "w") as f:
-        for row in arr:
-            f.write(" ".join(map(str, row)) + "\n")
-'''
+
+def load_training_data(training_cources,validation_cource,learn_mode):
+    #各コースの訓練データ群の配列
+    train_x_arr=[]
+    train_y_arr=[]
+
+    for cource in training_cources:
+        csv_path = f"{path}/result/WAVE{cource:04d}/result_n{learn_mode}-001.csv" 
+        train_x_i,train_y_i=read_csv_and_convert_dataset(csv_path)
+
+        train_x_arr.append(train_x_i)
+        train_y_arr.append(train_y_i)
+
+    csv_path = f"{path}/result/WAVE{validation_cource:04d}/result_nt-001.csv" 
+    val_x,val_y=read_csv_and_convert_dataset(csv_path)
+
+    return (train_x_arr,train_y_arr),(val_x,val_y)

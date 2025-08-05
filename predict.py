@@ -6,30 +6,21 @@ from keras.models import load_model
 from constant import *
 from func import *
 
-data_csv = pd.read_csv(CSV_PATH, usecols=["ReceivedPower[dBm]"]) # csvを読み込みデータフレームに
+csv_path= f"{path}/result/WAVE{PREDICT_COURCE:04d}/result_n{LEARN_MODE}-001.csv" 
+data_csv = pd.read_csv(csv_path, usecols=["ReceivedPower[dBm]"]) # csvを読み込みデータフレームに
 true_data = data_csv.values.astype(np.float64)
 normalized_true_data = (true_data - true_data.mean()) / true_data.std()
 
-input_len=[5,25,50,100]
-x=[]
-y=[]
-for len in input_len:
-    x_i,y_i=make_data_set(normalized_true_data,len)
-    x.append(x_i)
-    y.append(y_i)
+x,y=make_data_set(normalized_true_data,INPUT_LEN)
 
-predicteds=[]
-for i in range(0,4):
-    model_path=path+f"/cource_{COURCE_NUM}_model_{input_len[i]}.h5"
-    if os.path.exists(model_path):
-        print("✅ 既存のモデルを読み込みます")
-        model = load_model(model_path)
-    else:
-        print("モデルが見つかりません")
+if os.path.exists(MODEL_PATH):
+    print("✅ 既存のモデルを読み込みます")
+    model = load_model(MODEL_PATH)
+else:
+    print("モデルが見つかりません")
 
-    predicted=model.predict(x[i])
-    predicted =  predicted * true_data.std() + true_data.mean()
-    predicteds.append(predicted)
+predicted = model.predict(x)
+predicted = predicted * true_data.std() + true_data.mean()
 
 '''
 ##### ここから再帰予測 #####
@@ -51,28 +42,19 @@ rmse=np.sqrt(np.mean((future_result - true_data[-PREDICT_LEN:])**2))
 print(f"2乗誤差:{rmse}")
 '''
 
-for i in range(0,4):
-    rmse=np.sqrt(np.mean((predicteds[i]-true_data[input_len[i]:])**2))
-    print(i+1,rmse)
+rmse=np.sqrt(np.mean((predicted-true_data[INPUT_LEN:])**2))
+print(rmse)
 
-x=[]
-x.append(np.linspace(0,20,400))
-x.append(np.linspace(5/20,20,395))
-x.append(np.linspace(25/20,20,375))
-x.append(np.linspace(50/20,20,350))
-x.append(np.linspace(100//20,20,300))
-
+# ここで使うデータは0.05ミリ秒毎にサンプリングされている
+# plotするときに単位を秒にするための準備
+x_true_data=np.linspace(0,PLOT_RANGE/20,PLOT_RANGE)
+x_predict=np.linspace(INPUT_LEN/20,PLOT_RANGE/20,PLOT_RANGE-INPUT_LEN)
 
 plt.figure()
 plt.xlabel("Time[s]")
 plt.ylabel("ReceivedPower[dBm]")
-#plt.plot(range(INPUT_LEN,PLOT_RANGE+INPUT_LEN), predicted[:PLOT_RANGE], color="g", label="future_predict")
-plt.plot(x[0],true_data[:400],color="r",alpha=0.5,label="true_data")
-plt.plot(x[1], predicteds[0][:395], color="y", alpha=0.5,label="5")
-plt.plot(x[2], predicteds[1][:375], color="b", alpha=0.5,label="25")
-plt.plot(x[3], predicteds[2][:350], color="c", alpha=0.5,label="50")
-plt.plot(x[4], predicteds[3][:300], color="g", alpha=0.5,label="100")
-
+plt.plot(x_true_data,true_data[:PLOT_RANGE],color="r",alpha=0.5,label="true_data")
+plt.plot(x_predict, predicted[:PLOT_RANGE-INPUT_LEN], color="g", label="future_predict")
 #plt.plot(range(len(true_data)-PREDICT_LEN, len(true_data)), future_result, color="g", label="future_predict")
 #plt.plot(range(len(true_data)-PLOT_RANGE-PREDICT_LEN,len(true_data)),true_data[-PLOT_RANGE-PREDICT_LEN:],color="r",alpha=0.5,label="true_data")
 plt.legend()

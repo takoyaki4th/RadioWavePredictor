@@ -24,6 +24,7 @@ for i in range(1,4):
 csv_path = f"{path}/result/WAVE0004/result_nt-001.csv" 
 val_x,val_y=read_csv_and_convert_dataset(csv_path)
 
+input_len=[5,25,50,100]
 # モデル構築
 print("🚀 新しいモデルを作成します")
 model = Sequential()

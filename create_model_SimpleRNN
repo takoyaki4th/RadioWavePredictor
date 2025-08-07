@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import time 
 from keras import Input
 from keras.models import Sequential
 from keras.layers import Dense, Activation
@@ -8,6 +9,9 @@ from keras.callbacks import EarlyStopping
 
 from constant import *
 from func import load_training_data
+
+#コード実行時間計測
+start_time=time.time()
 
 (train_x_arr,train_y_arr),(val_x,val_y)=load_training_data(TRAINING_COURCES,VALIDATION_COURCE,LEARN_MODE)
 
@@ -38,6 +42,9 @@ for i,cource in enumerate(TRAINING_COURCES):
     )
 
 model.save(MODEL_PATH)
+
+end_time=time.time()
+print(f"実行時間:{(end_time-start_time):2f}秒")
 
 plt.figure()
 plt.plot(history.history['loss'], label='loss')

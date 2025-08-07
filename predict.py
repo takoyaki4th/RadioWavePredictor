@@ -20,7 +20,12 @@ else:
     print("モデルが見つかりません")
 
 predicted = model.predict(x)
+normalized_rmse=np.sqrt(np.mean((predicted-normalized_true_data[INPUT_LEN:])**2))
+print(f"正規化状態でのRMSE{normalized_rmse}")
+
 predicted = predicted * true_data.std() + true_data.mean()
+rmse=np.sqrt(np.mean((predicted-true_data[INPUT_LEN:])**2))
+print(rmse)
 
 '''
 ##### ここから再帰予測 #####
@@ -42,8 +47,7 @@ rmse=np.sqrt(np.mean((future_result - true_data[-PREDICT_LEN:])**2))
 print(f"2乗誤差:{rmse}")
 '''
 
-rmse=np.sqrt(np.mean((predicted-true_data[INPUT_LEN:])**2))
-print(rmse)
+
 
 # ここで使うデータは0.05ミリ秒毎にサンプリングされている
 # plotするときに単位を秒にするための準備

@@ -24,10 +24,10 @@ model.compile(loss="mean_squared_error", optimizer=optimizer)
 
 early_stopping = EarlyStopping(monitor='val_loss', mode='auto', patience=20)
 
-for i in range(len(train_x_arr)):
-    print("######################")
-    print(f"現在の学習コース:{i+1}")
-    print("######################")
+for i,cource in enumerate(TRAINING_COURCES):
+    print("\n##########################")
+    print(f"コース{cource}を学習します")
+    print("##########################\n")
     history=model.fit(
         train_x_arr[i],
         train_y_arr[i],

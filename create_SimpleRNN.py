@@ -13,7 +13,7 @@ from func import load_training_data
 #コード実行時間計測
 start_time=time.time()
 
-(train_x_arr,train_y_arr),(val_x,val_y)=load_training_data(TRAINING_COURCES,VALIDATION_COURCE,LEARN_MODE)
+train_dataset_arr,val_dataset=load_training_data(TRAINING_COURCES,VALIDATION_COURCE,LEARN_MODE)
 
 # モデル構築
 print("🚀 新しいモデルを作成します")
@@ -34,11 +34,9 @@ for i,cource in enumerate(TRAINING_COURCES):
     print(f"コース{cource}を学習します")
     print("##########################\n")
     history=model.fit(
-        train_x_arr[i],
-        train_y_arr[i],
-        batch_size=BATCH_SIZE,
+        train_dataset_arr[i],
         epochs=EPOCHS,
-        validation_data=(val_x,val_y),
+        validation_data=val_dataset,
         callbacks=[early_stopping],
     )
 

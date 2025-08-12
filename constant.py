@@ -1,13 +1,12 @@
 import os
 path = os.path.dirname(__file__)
 
-#TRAINING_COURCES=range(1,4) #学習するコース番号群
-TRAINING_COURCES=[1,2,3,6,7,8,9,10,11,12,13,14,15,16,17] #学習するコース番号群
+TRAINING_COURCES=range(1,4) #学習するコース番号群
 VALIDATION_COURCE=5 #検証に使うコース番号
 LEARN_MODE="t" #学習データの種類 tなら時間、dなら距離
 
 ### 学習モデルに関する設定 ### 
-INPUT_LEN = 100
+INPUT_LEN = 50
 HIDDEN_NUM = 16
 FEATURES_NUM = 1 #特徴量の数
 BATCH_SIZE = 128

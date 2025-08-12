@@ -7,7 +7,7 @@ from func import load_training_data
 from hyperparam_tuning.build_model import build_model
 
 def layer_unit_tuning():
-    (train_x_arr,train_y_arr),(val_x,val_y)=load_training_data(TRAINING_COURCES,VALIDATION_COURCE,LEARN_MODE)
+    train_dataset_arr,validation_dataset=load_training_data(TRAINING_COURCES,VALIDATION_COURCE,LEARN_MODE)
 
     tuner = keras_tuner.RandomSearch(
         build_model,
@@ -20,11 +20,9 @@ def layer_unit_tuning():
     early_stopping = EarlyStopping(monitor='val_loss', mode='auto', patience=20)
     
     tuner.search(
-        train_x_arr[0], 
-        train_y_arr[0],
+        train_dataset_arr[0],
         epochs=EPOCHS,
-        validation_data=(val_x, val_y),
-        batch_size=BATCH_SIZE,
+        validation_data=validation_dataset,
         callbacks=[early_stopping],
     )
 

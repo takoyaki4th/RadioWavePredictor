@@ -1,4 +1,3 @@
-import time 
 import keras_tuner
 from keras.callbacks import EarlyStopping
 
@@ -19,6 +18,7 @@ def layer_unit_tuning():
 
     early_stopping = EarlyStopping(monitor='val_loss', mode='auto', patience=20)
     
+    
     tuner.search(
         train_dataset_arr[0],
         epochs=EPOCHS,
@@ -29,4 +29,4 @@ def layer_unit_tuning():
     tuner.results_summary()
 
     best_hps = tuner.get_best_hyperparameters()[0]
-    print(best_hps.values)
+    print(f"一番良かったパラメータ:{best_hps.values}")

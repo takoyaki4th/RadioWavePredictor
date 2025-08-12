@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import os
 path = os.path.dirname(__file__)
+import tensorflow as tf
 from keras.utils import timeseries_dataset_from_array
 from constant import INPUT_LEN,BATCH_SIZE
 
@@ -23,6 +24,7 @@ def read_csv_and_convert_dataset(csv_path):
         sequence_length=INPUT_LEN,
         batch_size=BATCH_SIZE
     )
+    dataset=dataset.prefetch(tf.data.AUTOTUNE)
     return dataset 
 
 #csvからデータを読み込んで機械学習の訓練データセットと検証データセットを返す関数

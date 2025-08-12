@@ -1,5 +1,6 @@
 import time 
 import keras_tuner
+from keras.callbacks import EarlyStopping
 
 from constant import *
 from func import load_training_data
@@ -16,7 +17,16 @@ def layer_unit_tuning():
         project_name='tuner_result'
     )
 
-    tuner.search(train_x_arr[0], train_y_arr[0], epochs=50, validation_data=(val_x, val_y))
+    early_stopping = EarlyStopping(monitor='val_loss', mode='auto', patience=20)
+    
+    tuner.search(
+        train_x_arr[0], 
+        train_y_arr[0],
+        epochs=EPOCHS,
+        validation_data=(val_x, val_y),
+        batch_size=BATCH_SIZE,
+        callbacks=[early_stopping],
+    )
 
     tuner.results_summary()
 

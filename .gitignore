@@ -4,3 +4,5 @@ __pychache__/
 *.h5
 
 predict_all.py
+
+tuner_result/

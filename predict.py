@@ -47,8 +47,6 @@ rmse=np.sqrt(np.mean((future_result - true_data[-PREDICT_LEN:])**2))
 print(f"2乗誤差:{rmse}")
 '''
 
-
-
 # ここで使うデータは0.05ミリ秒毎にサンプリングされている
 # plotするときに単位を秒にするための準備
 x_true_data=np.linspace(0,PLOT_RANGE/20,PLOT_RANGE)

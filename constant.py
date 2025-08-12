@@ -10,7 +10,7 @@ INPUT_LEN = 50
 HIDDEN_NUM = 128
 FEATURES_NUM = 1 #特徴量の数
 BATCH_SIZE = 128
-EPOCHS = 2
+EPOCHS = 200
 LEARNING_RATE = 0.002
 
 #作成するモデルのパスと名前(予測でもこれを参照しています)

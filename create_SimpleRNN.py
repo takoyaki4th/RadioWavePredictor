@@ -7,7 +7,7 @@ from keras.layers import SimpleRNN
 from keras.optimizers import Adam
 from keras.callbacks import EarlyStopping
 
-from constant import *
+from setting import *
 from func import load_training_data
 
 #コード実行時間計測
@@ -19,6 +19,7 @@ train_dataset_arr,val_dataset=load_training_data(TRAINING_COURCES,VALIDATION_COU
 print("🚀 新しいモデルを作成します")
 model = Sequential()
 model.add(Input(shape=(INPUT_LEN, FEATURES_NUM)))
+model.add(SimpleRNN(HIDDEN_NUM, return_sequences=True))
 model.add(SimpleRNN(HIDDEN_NUM, return_sequences=True))
 model.add(SimpleRNN(HIDDEN_NUM, return_sequences=True))
 model.add(SimpleRNN(HIDDEN_NUM, return_sequences=False))

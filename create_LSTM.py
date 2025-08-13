@@ -6,7 +6,7 @@ from keras.layers import LSTM
 from keras.optimizers import Adam
 from keras.callbacks import EarlyStopping
 
-from constant import *
+from setting import *
 from func import load_training_data
 
 (train_x_arr,train_y_arr),(val_x,val_y)=load_training_data(TRAINING_COURCES,VALIDATION_COURCE,LEARN_MODE)

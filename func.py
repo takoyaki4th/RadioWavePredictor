@@ -4,7 +4,7 @@ import os
 path = os.path.dirname(__file__)
 import tensorflow as tf
 from keras.utils import timeseries_dataset_from_array
-from constant import INPUT_LEN,BATCH_SIZE
+from setting import INPUT_LEN,BATCH_SIZE
 
 def normalize(data):
     return (data - data.mean()) / data.std()

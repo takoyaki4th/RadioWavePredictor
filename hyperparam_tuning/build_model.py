@@ -1,11 +1,10 @@
-import tensorflow as tf
 from keras import Input
 from keras.models import Sequential
 from keras.layers import Dense, Activation
 from keras.layers import SimpleRNN
 from keras.optimizers import Adam
 
-from constant import *
+from setting import *
 
 def make_model(units=4, depth=2):
     print("🚀 新しいモデルを作成します")

@@ -1,7 +1,7 @@
 import keras_tuner
 from keras.callbacks import EarlyStopping
 
-from constant import *
+from setting import *
 from func import load_training_data
 from hyperparam_tuning.build_model import build_model
 

@@ -2,8 +2,8 @@ import os
 from keras.layers import SimpleRNN,LSTM,GRU
 path = os.path.dirname(__file__)
 
-#TRAINING_COURCES=[1,2,3,6,7,8,9,10,11,12,13,14,15,16,17] #学習するコース番号群
-TRAINING_COURCES=range(1,4) #学習するコース番号群
+TRAINING_COURCES=[1,2,3,6,7,8,9,10,11,12,13,14,15,16,17] #学習するコース番号群
+#TRAINING_COURCES=range(1,4) #学習するコース番号群
 VALIDATION_COURCE=5 #検証に使うコース番号
 LEARN_MODE="t" #学習データの種類 tなら時間、dなら距離
 
@@ -13,7 +13,7 @@ INPUT_LEN = 100
 HIDDEN_NUMS = [8,8,8]
 FEATURES_NUM = 1 #特徴量の数
 BATCH_SIZE = 128
-EPOCHS = 200
+EPOCHS = 300
 LEARNING_RATE = 0.003
 
 #作成するモデルのパスと名前(予測でもこれを参照しています)

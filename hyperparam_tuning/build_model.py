@@ -37,10 +37,10 @@ class RNNHyperModel(HyperModel):
         model = Sequential()
         model.add(Input(shape=(INPUT_LEN, 1)))
 
-        depth=hp.Int("depth",1,4)
+        depth=hp.Int("depth",1,5)
         # 層の数・サイズ
         for i in range(depth):
-            model.add(USE_RNN_LAYER(units=hp.Int(f"units_{i}", 16, 128, step=16),return_sequences=(i < depth - 1)))
+            model.add(USE_RNN_LAYER(units=hp.Int(f"units_{i}", 4, 256, step=1),return_sequences=(i < depth - 1)))
 
         model.add(Dense(1, activation="linear"))
         model.compile(

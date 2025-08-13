@@ -7,7 +7,7 @@ from hyperparam_tuning.build_model import RNNHyperModel
 
 # プログラムの実行はルートディレクトリにあるhyperparam.pyから行ってください
 def layer_unit_tuning():
-    train_dataset_arr,validation_dataset=load_training_data(TRAINING_COURCES,VALIDATION_COURCE,LEARN_MODE)
+    train_dataset,validation_dataset=load_training_data(TRAINING_COURCES,VALIDATION_COURCE,LEARN_MODE)
 
     tuner = Hyperband(
         RNNHyperModel(),
@@ -18,7 +18,7 @@ def layer_unit_tuning():
     )
 
     tuner.search(
-        train_dataset_arr[0],
+        train_dataset,
         validation_data=validation_dataset,
         callbacks=[EarlyStopping(monitor='val_loss', mode='auto', patience=20)],
     )

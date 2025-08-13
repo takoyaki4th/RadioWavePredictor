@@ -22,7 +22,8 @@ def read_csv_and_convert_dataset(csv_path):
         data_numpy_normalized,
         targets=data_numpy_normalized[INPUT_LEN:],
         sequence_length=INPUT_LEN,
-        batch_size=BATCH_SIZE
+        batch_size=BATCH_SIZE,
+        shuffle=True
     )
     dataset=dataset.prefetch(tf.data.AUTOTUNE)
     return dataset 

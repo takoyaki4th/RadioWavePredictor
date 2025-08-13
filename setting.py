@@ -8,13 +8,13 @@ VALIDATION_COURCE=5 #検証に使うコース番号
 LEARN_MODE="t" #学習データの種類 tなら時間、dなら距離
 
 ### 学習モデルに関する設定 ### 
-USE_RNN_LAYER = LSTM #使用するRNNの種類、layerを作るときに使用するclassを直接指定する
-INPUT_LEN = 50
-HIDDEN_NUMS = [8,4,8]
+USE_RNN_LAYER = SimpleRNN #使用するRNNの種類、layerを作るときに使用するclassを直接指定する
+INPUT_LEN = 100
+HIDDEN_NUMS = [8,8,8]
 FEATURES_NUM = 1 #特徴量の数
 BATCH_SIZE = 128
 EPOCHS = 200
-LEARNING_RATE = 0.005
+LEARNING_RATE = 0.003
 
 #作成するモデルのパスと名前(予測でもこれを参照しています)
 MODEL_PATH = path+f"/{USE_RNN_LAYER.__name__}_{INPUT_LEN}.h5"

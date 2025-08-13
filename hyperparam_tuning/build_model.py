@@ -1,3 +1,4 @@
+'''
 from keras import Input
 from keras.models import Sequential
 from keras.layers import Dense, Activation
@@ -5,7 +6,6 @@ from keras.layers import SimpleRNN
 from keras.optimizers import Adam
 
 from setting import *
-
 def make_model(units=4, depth=2):
     print("🚀 新しいモデルを作成します")
     model = Sequential()
@@ -25,4 +25,27 @@ def build_model(hp):
     depth = hp.Choice('depth', [1, 2, 3, 4])
     model = make_model(units, depth)
     return model
+'''
+from keras.models import Sequential
+from keras.layers import Dense, Input
+from keras_tuner import HyperModel
 
+from setting import INPUT_LEN,USE_RNN_LAYER
+
+class RNNHyperModel(HyperModel):
+    def build(self, hp):
+        model = Sequential()
+        model.add(Input(shape=(INPUT_LEN, 1)))
+
+        depth=hp.Int("depth",1,4)
+        # 層の数・サイズ
+        for i in range(depth):
+            model.add(USE_RNN_LAYER(units=hp.Int(f"units_{i}", 16, 128, step=16),return_sequences=(i < depth - 1)))
+
+        model.add(Dense(1, activation="linear"))
+        model.compile(
+            loss="mse",
+            optimizer="adam",
+        )
+        model.summary()
+        return model

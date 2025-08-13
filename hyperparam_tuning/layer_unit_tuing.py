@@ -1,25 +1,24 @@
-import keras_tuner
+from keras_tuner.tuners import Hyperband
 from keras.callbacks import EarlyStopping
 
 from setting import *
 from func import load_training_data
-from hyperparam_tuning.build_model import build_model
+from hyperparam_tuning.build_model import RNNHyperModel
 
 # プログラムの実行はルートディレクトリにあるhyperparam.pyから行ってください
 def layer_unit_tuning():
     train_dataset_arr,validation_dataset=load_training_data(TRAINING_COURCES,VALIDATION_COURCE,LEARN_MODE)
 
-    tuner = keras_tuner.RandomSearch(
-        build_model,
+    tuner = Hyperband(
+        RNNHyperModel(),
         objective='val_loss',
-        max_trials=5,
-        directory=path,
+        max_epochs=EPOCHS,
+        directory=f'{path}/hyperparam_tuning',
         project_name='tuner_result'
     )
 
     tuner.search(
         train_dataset_arr[0],
-        epochs=EPOCHS,
         validation_data=validation_dataset,
         callbacks=[EarlyStopping(monitor='val_loss', mode='auto', patience=20)],
     )

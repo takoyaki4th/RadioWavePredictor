@@ -24,7 +24,7 @@ model.add(USE_RNN_LAYER(HIDDEN_NUMS[-1], return_sequences=False))
 model.add(Dense(FEATURES_NUM))
 model.add(Activation("linear"))
 optimizer = Adam(learning_rate=LEARNING_RATE)
-model.compile(loss="mean_squared_error", optimizer=optimizer)
+model.compile(loss="mse", optimizer=optimizer)
 model.summary()
 
 history=model.fit(

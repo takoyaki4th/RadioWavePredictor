@@ -10,14 +10,14 @@ LEARN_MODE="t" #学習データの種類 tなら時間、dなら距離
 ### 学習モデルに関する設定 ### 
 USE_RNN_LAYER = SimpleRNN #使用するRNNの種類、layerを作るときに使用するclassを直接指定する
 INPUT_LEN = 100
-HIDDEN_NUMS = [8,8,8]
+HIDDEN_NUMS = [16,8,4] #隠れ層のユニット数を配列で指定
 FEATURES_NUM = 1 #特徴量の数
 BATCH_SIZE = 128
 EPOCHS = 300
-LEARNING_RATE = 0.003
+LEARNING_RATE = 0.0004
 
 #作成するモデルのパスと名前(予測でもこれを参照しています)
-MODEL_PATH = path+f"/{USE_RNN_LAYER.__name__}_{INPUT_LEN}.h5"
+MODEL_PATH = path+f"/{USE_RNN_LAYER.__name__}_{INPUT_LEN}.keras"
 
 ### 予測に関する設定 ###
 PREDICT_COURCE=4 #予測したいコース番号

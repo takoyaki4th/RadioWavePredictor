@@ -28,24 +28,26 @@ def build_model(hp):
 '''
 from keras.models import Sequential
 from keras.layers import Dense, Input
+from keras.optimizers import Adam
 from keras_tuner import HyperModel
 
-from setting import INPUT_LEN,USE_RNN_LAYER
+from setting import *
 
 class RNNHyperModel(HyperModel):
     def build(self, hp):
         model = Sequential()
         model.add(Input(shape=(INPUT_LEN, 1)))
 
-        depth=hp.Int("depth",1,5)
+        depth=hp.Int("depth",1,4)
         # 層の数・サイズ
         for i in range(depth):
-            model.add(USE_RNN_LAYER(units=hp.Int(f"units_{i}", 4, 256, step=1),return_sequences=(i < depth - 1)))
+            model.add(USE_RNN_LAYER(units=hp.Int(f"units_{i}", 4, 256, step=4),return_sequences=(i < depth - 1)))
 
+        optimizer = Adam(learning_rate=hp.Int(f"lr",1e-4,1e-3))
         model.add(Dense(1, activation="linear"))
         model.compile(
             loss="mse",
-            optimizer="adam",
+            optimizer=optimizer,
         )
         model.summary()
         return model

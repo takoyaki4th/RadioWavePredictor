@@ -3,7 +3,7 @@ import time
 from keras import Input
 from keras.models import Sequential
 from keras.layers import Dense, Activation
-from keras.optimizers import Adam
+from keras.optimizers import AdamW,Adam
 from keras.callbacks import EarlyStopping
 
 from setting import *
@@ -12,7 +12,7 @@ from func import load_training_data
 #コード実行時間計測
 start_time=time.time()
 
-train_dataset,val_dataset=load_training_data(TRAINING_COURCES,VALIDATION_COURCE,LEARN_MODE)
+train_dataset,val_dataset=load_training_data(TRAINING_COURCES,VALIDATION_COURCES,LEARN_MODE,BATCH_SIZE,INPUT_LEN)
 
 # モデル構築
 print("🚀 新しいモデルを作成します")
@@ -23,7 +23,7 @@ for hidden_num in HIDDEN_NUMS[:-1]:
 model.add(USE_RNN_LAYER(HIDDEN_NUMS[-1], return_sequences=False))
 model.add(Dense(FEATURES_NUM))
 model.add(Activation("linear"))
-optimizer = Adam(learning_rate=LEARNING_RATE)
+optimizer = AdamW(learning_rate=LEARNING_RATE,weight_decay=1e-4)
 model.compile(loss="mse", optimizer=optimizer)
 model.summary()
 

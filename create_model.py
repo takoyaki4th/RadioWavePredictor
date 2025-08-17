@@ -3,7 +3,6 @@ import time
 from keras import Input
 from keras.models import Sequential
 from keras.layers import Dense, Activation
-from keras.optimizers import AdamW,Adam
 from keras.callbacks import EarlyStopping
 
 from setting import *
@@ -17,13 +16,14 @@ train_dataset,val_dataset=load_training_data(TRAINING_COURCES,VALIDATION_COURCES
 # モデル構築
 print("🚀 新しいモデルを作成します")
 model = Sequential()
-model.add(Input(shape=(INPUT_LEN, FEATURES_NUM)))
+model.add(Input(shape=(INPUT_LEN, IN_FEATURES_NUM)))
+
 for hidden_num in HIDDEN_NUMS[:-1]:
     model.add(USE_RNN_LAYER(hidden_num, return_sequences=True))
 model.add(USE_RNN_LAYER(HIDDEN_NUMS[-1], return_sequences=False))
-model.add(Dense(FEATURES_NUM))
+model.add(Dense(OUT_FEATURES_NUM))
 model.add(Activation("linear"))
-optimizer = AdamW(learning_rate=LEARNING_RATE,weight_decay=1e-4)
+optimizer = USE_OPTIMIZER(learning_rate=LEARNING_RATE)
 model.compile(loss="mse", optimizer=optimizer)
 model.summary()
 

@@ -7,11 +7,21 @@ from setting import *
 from func import *
 
 csv_path= f"{path}/result/WAVE{PREDICT_COURCE:04d}/result_n{LEARN_MODE}-001.csv" 
-data_csv = pd.read_csv(csv_path, usecols=["ReceivedPower[dBm]"]) # csvを読み込みデータフレームに
+data_csv = pd.read_csv(csv_path, usecols=["ReceivedPower[dBm]","1step_diff[dB]"]) # csvを読み込みデータフレームに
 true_data = data_csv.values.astype(np.float64)
-normalized_true_data = normalize(true_data)
 
-(x,y)=make_data_set(normalized_true_data,INPUT_LEN)
+normalized_true_data = normalize(true_data)
+true_data = true_data[:, 0]  # shape: (全時刻数,)
+
+x=timeseries_dataset_from_array(
+    normalized_true_data,
+    targets=None,
+    sequence_length=INPUT_LEN,
+    batch_size=1,
+    shuffle=None
+)
+ 
+#(x,y)=make_data_set(normalized_true_data,INPUT_LEN)
 
 if os.path.exists(MODEL_PATH):
     print("✅ 既存のモデルを読み込みます")
@@ -20,11 +30,12 @@ else:
     print("モデルが見つかりません")
 
 predicted = model.predict(x)
-normalized_rmse=np.sqrt(np.mean((predicted-normalized_true_data[INPUT_LEN:])**2))
-print(f"正規化状態でのRMSE{normalized_rmse}")
+#normalized_rmse=np.sqrt(np.mean((predicted-normalized_true_data[INPUT_LEN:])**2))
+#print(f"正規化状態でのRMSE{normalized_rmse}")
 
 denormalized_predicted = denormalize(predicted,true_data)
-rmse=np.sqrt(np.mean((denormalized_predicted-true_data[INPUT_LEN:])**2))
+reshape_denormalied_predeicted = np.array(denormalized_predicted).reshape(len(denormalized_predicted))
+rmse=np.sqrt(np.mean((reshape_denormalied_predeicted[:-1]-true_data[INPUT_LEN:])**2))
 print(rmse)
 
 '''
@@ -49,14 +60,14 @@ print(f"2乗誤差:{rmse}")
 
 # ここで使うデータは0.05ミリ秒毎にサンプリングされている
 # plotするときに単位を秒にするための準備
-x_true_data=np.linspace(0,PLOT_RANGE/20,PLOT_RANGE)
-x_predict=np.linspace(INPUT_LEN/20,PLOT_RANGE/20,PLOT_RANGE-INPUT_LEN)
+x_true_data=np.linspace(PLOT_START/20,(PLOT_START+PLOT_RANGE)/20,PLOT_RANGE)
+x_predict=np.linspace((PLOT_START+INPUT_LEN)/20,(PLOT_START+PLOT_RANGE)/20,PLOT_RANGE-INPUT_LEN)
 
 plt.figure()
 plt.xlabel("Time[s]")
 plt.ylabel("ReceivedPower[dBm]")
-plt.plot(x_true_data,true_data[:PLOT_RANGE],color="r",alpha=0.5,label="true_data")
-plt.plot(x_predict, denormalized_predicted[:PLOT_RANGE-INPUT_LEN], color="g", label="future_predict")
+plt.plot(x_true_data,true_data[PLOT_START:PLOT_START+PLOT_RANGE],color="r",alpha=0.5,label="true_data")
+plt.plot(x_predict, denormalized_predicted[PLOT_START:PLOT_START+PLOT_RANGE-INPUT_LEN], color="g", label="future_predict")
 #plt.plot(range(len(true_data)-PREDICT_LEN, len(true_data)), future_result, color="g", label="future_predict")
 #plt.plot(range(len(true_data)-PLOT_RANGE-PREDICT_LEN,len(true_data)),true_data[-PLOT_RANGE-PREDICT_LEN:],color="r",alpha=0.5,label="true_data")
 plt.legend()

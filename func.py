@@ -6,22 +6,24 @@ import tensorflow as tf
 from keras.utils import timeseries_dataset_from_array
 
 def normalize(data):
-    return (data - data.mean()) / data.std()
+    return (data - data.mean(axis=0)) / data.std(axis=0)
     
 def denormalize(normalized_data,base_data):
-    return normalized_data * base_data.std() + base_data.mean()
+    return normalized_data * base_data.std(axis=0) + base_data.mean(axis=0)
 
 #### ここから↓結構分かりづらいかも ごめんなさい ####
 
 def csv_to_dataset(csv_path,input_len): 
-    csv_data = pd.read_csv(csv_path, usecols=["ReceivedPower[dBm]"]) # csvを読み込みデータフレームに
+    csv_data = pd.read_csv(csv_path, usecols=["ReceivedPower[dBm]" ,"1step_diff[dB]"]) # csvを読み込みデータフレームに
     data_numpy = csv_data.values.astype(np.float64)
     data_numpy_normalized = normalize(data_numpy)
+    targets = data_numpy_normalized[:, 0] 
+    targets = targets[input_len:] 
     
     #datasetの中身はtensorflow特有のオブジェクトで入力と出力(入力に対する答え)のセットが入っている    
     dataset=timeseries_dataset_from_array(
         data_numpy_normalized,
-        targets=data_numpy_normalized[input_len:],
+        targets=targets,
         sequence_length=input_len,
         batch_size=None,
         shuffle=None
@@ -51,6 +53,7 @@ def load_training_data(training_cources,validation_cources,learn_mode,batch_size
         .batch(batch_size)
         .prefetch(tf.data.AUTOTUNE)
     )
+    
     val_dataset =multiple_csv_to_dataset(validation_cources,input_len,learn_mode)
     val_dataset = val_dataset.batch(batch_size).prefetch(tf.data.AUTOTUNE)
 

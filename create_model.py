@@ -11,17 +11,25 @@ from func import load_training_data
 #コード実行時間計測
 start_time=time.time()
 
-train_dataset,val_dataset=load_training_data(TRAINING_COURCES,VALIDATION_COURCES,LEARN_MODE,BATCH_SIZE,INPUT_LEN)
+train_dataset,val_dataset=load_training_data(
+    TRAINING_COURCES,
+    VALIDATION_COURCES,
+    LEARN_MODE,
+    BATCH_SIZE,
+    INPUT_LEN,
+    IN_FEATURES,
+    OUT_FEATURES
+)
 
 # モデル構築
 print("🚀 新しいモデルを作成します")
 model = Sequential()
-model.add(Input(shape=(INPUT_LEN, IN_FEATURES_NUM)))
+model.add(Input(shape=(INPUT_LEN, len(IN_FEATURES))))
 
 for hidden_num in HIDDEN_NUMS[:-1]:
     model.add(USE_RNN_LAYER(hidden_num, return_sequences=True))
 model.add(USE_RNN_LAYER(HIDDEN_NUMS[-1], return_sequences=False))
-model.add(Dense(OUT_FEATURES_NUM))
+model.add(Dense(OUT_STEPS_NUM))
 model.add(Activation("linear"))
 optimizer = USE_OPTIMIZER(learning_rate=LEARNING_RATE)
 model.compile(loss="mse", optimizer=optimizer)

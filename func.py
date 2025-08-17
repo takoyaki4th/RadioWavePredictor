@@ -12,17 +12,17 @@ def denormalize(normalized_data,base_data):
     return normalized_data * base_data.std(axis=0) + base_data.mean(axis=0)
 
 #### ここから↓結構分かりづらいかも ごめんなさい ####
-
-def csv_to_dataset(csv_path,input_len): 
-    csv_data = pd.read_csv(csv_path, usecols=["ReceivedPower[dBm]" ,"1step_diff[dB]"]) # csvを読み込みデータフレームに
-    data_numpy = csv_data.values.astype(np.float64)
-    data_numpy_normalized = normalize(data_numpy)
-    targets = data_numpy_normalized[:, 0] 
+def csv_to_dataset(csv_path,input_len,in_features,out_features): 
+    csv_data = pd.read_csv(csv_path, usecols=in_features)
+    data_normalized = normalize(csv_data)
+    data = data_normalized.values.astype(np.float64)
+    targets = data_normalized[out_features] 
     targets = targets[input_len:] 
+    targets = targets.values.astype(np.float64)
     
     #datasetの中身はtensorflow特有のオブジェクトで入力と出力(入力に対する答え)のセットが入っている    
     dataset=timeseries_dataset_from_array(
-        data_numpy_normalized,
+        data=data,
         targets=targets,
         sequence_length=input_len,
         batch_size=None,
@@ -30,11 +30,11 @@ def csv_to_dataset(csv_path,input_len):
     )
     return dataset 
 
-def multiple_csv_to_dataset(read_cources,input_len,learn_mode):
+def multiple_csv_to_dataset(read_cources,input_len,learn_mode,in_features,out_features):
     dataset_arr=[]
     for cource in read_cources:
         csv_path = f"{path}/result/WAVE{cource:04d}/result_n{learn_mode}-001.csv" 
-        train_dataset_i=csv_to_dataset(csv_path,input_len)
+        train_dataset_i=csv_to_dataset(csv_path,input_len,in_features,out_features)
 
         dataset_arr.append(train_dataset_i)
 
@@ -45,8 +45,8 @@ def multiple_csv_to_dataset(read_cources,input_len,learn_mode):
     return dataset
 
 #csvからデータを読み込んで機械学習の訓練データセットと検証データセットを返す関数
-def load_training_data(training_cources,validation_cources,learn_mode,batch_size,input_len):
-    train_dataset=multiple_csv_to_dataset(training_cources,input_len,learn_mode)
+def load_training_data(training_cources,validation_cources,learn_mode,batch_size,input_len,in_features,out_features):
+    train_dataset=multiple_csv_to_dataset(training_cources,input_len,learn_mode,in_features,out_features)
     train_dataset = (
         train_dataset
         .shuffle(buffer_size=10000)
@@ -54,7 +54,7 @@ def load_training_data(training_cources,validation_cources,learn_mode,batch_size
         .prefetch(tf.data.AUTOTUNE)
     )
     
-    val_dataset =multiple_csv_to_dataset(validation_cources,input_len,learn_mode)
+    val_dataset =multiple_csv_to_dataset(validation_cources,input_len,learn_mode,in_features,out_features)
     val_dataset = val_dataset.batch(batch_size).prefetch(tf.data.AUTOTUNE)
 
     return train_dataset,val_dataset
